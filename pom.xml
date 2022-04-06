@@ -32,6 +32,11 @@
 			<artifactId>aws-java-sdk</artifactId>
 			<version>1.12.192</version>
 		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>com.amazonaws</groupId>-->
+<!--			<artifactId>aws-java-sdk</artifactId>-->
+<!--			<version>1.11.649</version>-->
+<!--		</dependency>-->
 	</dependencies>
 
 	<build>

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
+import MyDropzone from './MyDropzone';
+
 const UserProfiles = () => {
   const [userProfiles, setUserProfiles] = useState([]);
 
@@ -17,9 +19,11 @@ const UserProfiles = () => {
 
   return userProfiles.map((userProfile, index) => {
     return (
-      <div>
+      <div key={index}>
+        <br/>
         <h1> {userProfile.username} </h1>
         <p> {userProfile.userProfileId} </p>
+        <MyDropzone userProfileId={userProfile.userProfileId}/>
       </div>
     );
   });

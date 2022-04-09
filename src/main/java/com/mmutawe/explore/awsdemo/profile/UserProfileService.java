@@ -47,13 +47,31 @@ public class UserProfileService {
 
         String fileName = String.format(
                 "%s-%s",
-                file.getName(),
+                file.getOriginalFilename(),
                 UUID.randomUUID());
 
         try {
-            fileStore.save(path, fileName, Optional.of(metadata), file.getInputStream());
+            fileStore.write(path, fileName, Optional.of(metadata), file.getInputStream());
+            user.setUserProfileDataLink(fileName);
         } catch (IOException e) {
             throw new IllegalStateException("File can not be uploaded.",e);
         }
+    }
+
+    public byte[] downloadUserProfileData(UUID userProfileId) {
+
+        UserProfile user = repository.getUserProfiles().stream()
+                .filter(userProfile -> userProfile.getUserProfileId().equals(userProfileId))
+                .findAny()
+                .orElseThrow(() -> new IllegalStateException("User not found"));
+
+        String path = String.format(
+                "%s/%s",
+                BucketName.PROFILE_IMAGE.getBucketName(),
+                user.getUserProfileId());
+
+        return user.getUserProfileDataLink()
+                .map(key -> fileStore.read(path, key))
+                .orElse(new byte[0]);
     }
 }

@@ -3,9 +3,13 @@ package com.mmutawe.explore.awsdemo.filestore;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Optional;
@@ -21,7 +25,7 @@ public class FileStore {
         this.s3 = s3;
     }
 
-    public void save(
+    public void write(
             String path,
             String fileName,
             Optional<Map<String, String>> optionalMetaData,
@@ -40,6 +44,17 @@ public class FileStore {
             s3.putObject(path, fileName, inputStream, objectMetadata);
         } catch (AmazonServiceException exception){
             throw new IllegalStateException("Unable to store data to S3.", exception);
+        }
+    }
+
+    public byte[] read(String path, String key){
+
+        try {
+            S3Object s3Object = s3.getObject(path, key);
+            S3ObjectInputStream objectContent = s3Object.getObjectContent();
+            return IOUtils.toByteArray(objectContent);
+        } catch (AmazonServiceException |IOException e){
+            throw new IllegalStateException("Unable to download file from s3", e);
         }
     }
 }
